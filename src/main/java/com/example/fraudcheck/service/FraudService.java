@@ -21,22 +21,17 @@ public class FraudService {
     public FraudScore checkFraud(Transaction transaction) {
         List<Signal> signals = new ArrayList<>();
 
-//        check location fraud
         Signal locationSignal = locationService.getLocationSignal(transaction);
         signals.add(locationSignal);
 
-//        check ipAddress fraud
         Signal ipAddressSignal = ipAddressService.getIPAddressSignal(transaction);
         signals.add(ipAddressSignal);
 
-//        check transaction fraud
         Signal transactionSignal = transactionService.getTransactionSignal(transaction);
         signals.add(transactionSignal);
 
-//        check cardDetails fraud
         Signal cardDetailsSignal = cardDetailsService.getCardDetailsSignal(transaction);
         signals.add(cardDetailsSignal);
-
 
         return new FraudScore(signals);
     }
