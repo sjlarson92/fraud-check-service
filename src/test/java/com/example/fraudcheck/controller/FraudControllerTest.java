@@ -19,6 +19,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -68,15 +69,30 @@ class FraudControllerTest {
                             .contentType(MediaType.APPLICATION_JSON))
                     .andExpect(result -> { FraudScore responseBody = objectMapper.readValue(result.getResponse().getContentAsString(), FraudScore.class);
                         assertThat(responseBody.signals()).hasSize(4);
-
                     });
 
         }
 
-//        @Test
-//        void whenInvalidMerchantNameThrowsException() throws Exception {
-//
-//        }
+        @Test
+        void whenInvalidCustomerNameThrowsException() throws Exception {
+
+            Location location = new Location("Springfield", "MO");
+
+            Transaction requestBody = new Transaction(
+                    "",
+                    "123.456.789",
+                    location,
+                    new PaymentDetails(1234, "Waldo", BigDecimal.valueOf(22.00)),
+                    new TransactionDetails("Merchant Name", location, 2)
+
+            );
+
+            mockMvc.perform(MockMvcRequestBuilders.post("/api/score-transaction")
+                            .content(objectMapper.writeValueAsString(requestBody))
+                            .contentType(MediaType.APPLICATION_JSON))
+                    .andExpect(status().isBadRequest());
+
+        }
     }
 
 
