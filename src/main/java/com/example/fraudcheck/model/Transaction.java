@@ -1,8 +1,7 @@
 package com.example.fraudcheck.model;
 
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.*;
 
 public record Transaction(
         @NotBlank(message = "Customer name is required")
