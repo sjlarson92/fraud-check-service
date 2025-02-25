@@ -16,6 +16,7 @@ public class FraudService {
     private final LocationService locationService;
     private final IPAddressService ipAddressService;
     private final TransactionService transactionService;
+    private final CardDetailsService cardDetailsService;
 
     public FraudScore checkFraud(Transaction transaction) {
         List<Signal> signals = new ArrayList<>();
@@ -33,6 +34,8 @@ public class FraudService {
         signals.add(transactionSignal);
 
 //        check cardDetails fraud
+        Signal cardDetailsSignal = cardDetailsService.getCardDetailsSignal(transaction);
+        signals.add(cardDetailsSignal);
 
 
         return new FraudScore(signals);

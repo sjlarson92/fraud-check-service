@@ -1,5 +1,6 @@
 # Quick Start
 - Import dependencies
+- add env variables for MaxMind
 - click play to run app
 - call endpoint using Postman
 
@@ -55,30 +56,30 @@ Example:
             "potentialFraud":true,
             "details":[
                 "Location differs from resident location",
-                "Location has not been purchased from previously",
-            ],
+                "Location has not been purchased from previously"
+            ]
          },
          {
             "signal":"ipAddress",
             "potentialFraud":false,
             "details": [
-                "IP Address is not known to be fraudulent or malicious",
+                "IP Address is not known to be fraudulent or malicious"
             ]
          },
          {
             "signal":"transaction",
             "potentialFraud":false,
             "details": [
-                "Transaction details do not look fraudulent",
+                "Transaction details do not look fraudulent"
             ]
          },
          {
             "signal":"cardDetails",
             "potentialFraud":false,
             "details": [
-                "Card details do not look fraudulent",
+                "Card details do not look fraudulent"
             ]
-         },
+         }
     ]
 }
 ```
