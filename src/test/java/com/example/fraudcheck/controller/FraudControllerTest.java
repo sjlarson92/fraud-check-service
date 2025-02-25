@@ -23,6 +23,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Optional;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ExtendWith(SpringExtension.class)
@@ -74,6 +75,31 @@ class FraudControllerTest {
         }
 
         @Test
+        void whenCustomerAndMerchantLocationDifferShouldSignalFraud() throws Exception {
+            Location customerLocation = new Location("Springfield", "MO");
+            Location merchantLocation = new Location("Not Springfield", "FL");
+            Transaction requestBody = new Transaction(
+                    "Waldo",
+                    "123.456.789",
+                    customerLocation,
+                    new PaymentDetails(1234, "Waldo", BigDecimal.valueOf(22.00)),
+                    new TransactionDetails("Merchant Name", merchantLocation, 2)
+
+            );
+
+            mockMvc.perform(MockMvcRequestBuilders.post("/api/score-transaction")
+                            .content(objectMapper.writeValueAsString(requestBody))
+                            .contentType(MediaType.APPLICATION_JSON))
+                    .andExpect(result -> { FraudScore responseBody = objectMapper.readValue(result.getResponse().getContentAsString(), FraudScore.class);
+                        Optional<Signal> locationSignal = responseBody.signals().stream().filter(it -> it.signal().equals(Signal.SignalType.LOCATION)).findFirst();
+                        assertThat(responseBody.signals()).hasSize(4);
+                        assertThat(locationSignal.isPresent()).isTrue();
+                        assertThat(locationSignal.get().potentialFraud()).isTrue();
+                    });
+
+        }
+
+        @Test
         void whenInvalidCustomerNameThrowsException() throws Exception {
 
             Location location = new Location("Springfield", "MO");
@@ -94,6 +120,4 @@ class FraudControllerTest {
 
         }
     }
-
-
 }
